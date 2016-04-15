@@ -1,15 +1,8 @@
 <html>
+<head>
+<script src="clock.js"></script>
 <body>
 <h1>Keiko was here</h1>
 <div id="clock"></div>
-<script>
-var d = new Date();
-var placeholder = document.getElementById("clock");
-function update_clock() {
-	d = new Date();
-	placeholder.innerHTML = d.toLocaleTimeString();
-}
-setInterval(update_clock, 1000);
-</script>
 </body>
 </html>
