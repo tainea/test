@@ -48,7 +48,7 @@ function
 updateSidebar(data)
 {
 	sidebar.children("h2").first().text(data.name);
-	sidebar.children("div").last().load(data.pageUrl);
+	sidebar.children("div.content").first().load(data.pageUrl);
 }
 
 // MAP
