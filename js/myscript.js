@@ -16,8 +16,10 @@ function
 init()
 {
 	initSidebar();
-	loadMapData();
+	initMap();
 }
+
+// SIDEBAR
 
 function
 initSidebar()
@@ -43,6 +45,21 @@ hideSidebar(e)
 }
 
 function
+updateSidebar(data)
+{
+	sidebar.children("h2").first().text(data.name);
+	sidebar.children("div").last().load(data.pageUrl);
+}
+
+// MAP
+
+function
+initMap(config)
+{
+	loadMapData();
+}
+
+function
 loadMapData()
 {
 	$.getJSON(mapDataUrl, onMapDataLoaded);
@@ -53,12 +70,12 @@ onMapDataLoaded(data)
 {
 	mapData = data;
 	console.log(mapData);
-	myMap = initMap(mapData.mapConfig);
+	myMap = configMap(mapData.mapConfig);
 	placeHighlightsOnMap(mapData.highlights, myMap);
 }
 
 function
-initMap(config)
+configMap(config)
 {
 	var map = new GMaps({
 		div: '#map',
@@ -90,12 +107,4 @@ onClickMarker(marker)
 	updateSidebar(marker.details)
 	showSidebar();
 }
-
-function
-updateSidebar(data)
-{
-	sidebar.children("h2").first().text(data.name);
-	sidebar.children("div").last().load(data.pageUrl);
-}
-
 
