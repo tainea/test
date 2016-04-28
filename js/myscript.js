@@ -87,7 +87,15 @@ function
 onClickMarker(marker)
 {
 	console.log(marker);
+	updateSidebar(marker.details)
 	showSidebar();
+}
+
+function
+updateSidebar(data)
+{
+	sidebar.children("h2").first().text(data.name);
+	sidebar.children("div").last().load(data.pageUrl);
 }
 
 
