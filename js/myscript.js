@@ -4,7 +4,7 @@ var debug = true;
 if (debug) var mapDataUrl = 'json/data.json';
 if (!debug) var mapDataUrl = 'http://node-test-nbwns.c9.io/discover_brussels/data/';
 
-var mapData = [];
+var mapData, myMap;
 
 $(document).ready(function(){
     init();
@@ -27,16 +27,33 @@ onMapDataLoaded(data)
 {
 	mapData = data;
 	console.log(mapData);
-	initMap(mapData.mapConfig);
+	myMap = initMap(mapData.mapConfig);
+	placeHighlightsOnMap(mapData.highlights, myMap);
 }
 
 function
 initMap(config)
 {
-	new GMaps({
+	var map = new GMaps({
 		div: '#map',
 		lat: config.defaultLatitude,
 		lng: config.defaultLongitude,
 		zoom: config.defaultZoom
 	});
+	return map;
 }
+
+function
+placeHighlightsOnMap(highlights, map)
+{
+	_(highlights).forEach(function(highlight) {
+		map.addMarker({
+			lat: highlight.latitude,
+			lng: highlight.longitude,
+			title: highlight.name
+		});
+	});
+}
+
+
+
