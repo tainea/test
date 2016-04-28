@@ -100,7 +100,7 @@ initMap(el, data)
 		lng: config.defaultLongitude,
 		zoom: config.defaultZoom
 	});
-	//placeHighlightsOnMap(data.highlights, map);
+	placeHighlightsOnMap(data.highlights, map);
 }
 
 function
