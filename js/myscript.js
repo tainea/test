@@ -6,6 +6,7 @@ if (!debug) var dataUrl = 'http://node-test-nbwns.c9.io/discover_brussels/data/'
 
 var sidebar;
 var template;
+var highlights;
 
 $(document).ready(function(){
     init();
@@ -36,10 +37,25 @@ onDataLoaded(data)
 function
 initHighlights(el, data)
 {
-	var hl = $(el);
+	var el  = $(el);
 
-	template = _.template('<div data-page-url="<%- pageUrl %>" class="thumbnail"><img src="<%- picture %>" alt="<%- name %>"><div class="caption"><h3><%- name %></h3><p><%- abstract %></p><p><a href="#" class="btn btn-primary">Learn more</a></p></div></div>');
-	hl.html(template(_.first(data.highlights)));
+	highlights = data.highlights;
+
+	template = _.template('<div data-page-url="<%- pageUrl %>" class="thumbnail"><img src="<%- picture %>" alt="<%- name %>"><div class="caption"><h3><%- name %></h3><p><%- abstract %></p><p><a class="btn btn-primary" data="<%- name %>"">Learn more</a></p></div></div>');
+
+	var highlight = _.first(highlights);
+	el.html(template(highlight));
+	el.find("a.btn").first().click(onClickLearnMore);
+}
+
+function
+onClickLearnMore(e)
+{
+	var name = e.target.attributes.data.value;
+	var highlight = _.find(highlights, function(o) { return o.name = name} );
+	console.log(highlight);
+	updateSidebar(highlight);
+	showSidebar();
 }
 
 // SIDEBAR
