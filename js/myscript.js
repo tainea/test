@@ -50,10 +50,17 @@ placeHighlightsOnMap(highlights, map)
 		map.addMarker({
 			lat: highlight.latitude,
 			lng: highlight.longitude,
-			title: highlight.name
+			title: highlight.name,
+			details: highlight,
+			click: onClickMarker
 		});
 	});
 }
 
+function
+onClickMarker(marker)
+{
+	console.log(marker);
+}
 
 
