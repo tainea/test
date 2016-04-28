@@ -16,6 +16,7 @@ function
 init()
 {
 	loadData(dataUrl);
+	initParallax();
 }
 
 function
@@ -30,6 +31,14 @@ onDataLoaded(data)
 	initSidebar("#sidebar");
 	initHighlights("#highlights", data);
 	initMap('#map', data);
+}
+
+//PARALLAX
+
+function
+initParallax()
+{
+	$.stellar();
 }
 
 // HIGHLIGHTS
