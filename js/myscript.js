@@ -6,6 +6,8 @@ if (!debug) var mapDataUrl = 'http://node-test-nbwns.c9.io/discover_brussels/dat
 
 var mapData, myMap;
 
+var sidebar;
+
 $(document).ready(function(){
     init();
 });
@@ -13,7 +15,31 @@ $(document).ready(function(){
 function
 init()
 {
+	initSidebar();
 	loadMapData();
+}
+
+function
+initSidebar()
+{
+
+	sidebar = $("#sidebar");
+	var close = $("#close");
+	close.removeAttr('href')
+	close.click(hideSidebar);
+}
+
+function
+showSidebar()
+{
+	sidebar.animate({right: '0'}, 300);
+}
+
+function
+hideSidebar(e)
+{
+	e.stopPropagation();
+	sidebar.animate({right: '-300'}, 300);
 }
 
 function
@@ -61,6 +87,7 @@ function
 onClickMarker(marker)
 {
 	console.log(marker);
+	showSidebar();
 }
 
 
