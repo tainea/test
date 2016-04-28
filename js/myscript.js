@@ -1,11 +1,10 @@
 var debug = true;
 
 // if not in debug mode, we load data from an external server
-if (debug) var mapDataUrl = 'json/data.json';
-if (!debug) var mapDataUrl = 'http://node-test-nbwns.c9.io/discover_brussels/data/';
+if (debug) var dataUrl = 'json/data.json';
+if (!debug) var dataUrl = 'http://node-test-nbwns.c9.io/discover_brussels/data/';
 
-var mapData, myMap;
-
+var myMap;
 var sidebar;
 
 $(document).ready(function(){
@@ -15,18 +14,33 @@ $(document).ready(function(){
 function
 init()
 {
-	initSidebar();
-	initMap();
+	loadData(dataUrl);
 }
+
+function
+loadData(url)
+{
+	$.getJSON(dataUrl, onDataLoaded);
+}
+
+function
+onDataLoaded(data)
+{
+	initSidebar("#sidebar");
+	initMap('#map', data);
+}
+
+// HIGHLIGHTS
+
+
 
 // SIDEBAR
 
 function
-initSidebar()
+initSidebar(el)
 {
-
-	sidebar = $("#sidebar");
-	var close = $("#close");
+	sidebar = $(el);
+	var close = sidebar.children('#close').first();
 	close.removeAttr('href')
 	close.click(hideSidebar);
 }
@@ -40,7 +54,6 @@ showSidebar()
 function
 hideSidebar(e)
 {
-	e.stopPropagation();
 	sidebar.animate({right: '-300'}, 300);
 }
 
@@ -54,36 +67,16 @@ updateSidebar(data)
 // MAP
 
 function
-initMap(config)
+initMap(el, data)
 {
-	loadMapData();
-}
-
-function
-loadMapData()
-{
-	$.getJSON(mapDataUrl, onMapDataLoaded);
-}
-
-function
-onMapDataLoaded(data)
-{
-	mapData = data;
-	console.log(mapData);
-	myMap = configMap(mapData.mapConfig);
-	placeHighlightsOnMap(mapData.highlights, myMap);
-}
-
-function
-configMap(config)
-{
+	var config = data.mapConfig;
 	var map = new GMaps({
-		div: '#map',
+		div: el,
 		lat: config.defaultLatitude,
 		lng: config.defaultLongitude,
 		zoom: config.defaultZoom
 	});
-	return map;
+	placeHighlightsOnMap(data.highlights, map);
 }
 
 function
@@ -103,7 +96,6 @@ placeHighlightsOnMap(highlights, map)
 function
 onClickMarker(marker)
 {
-	console.log(marker);
 	updateSidebar(marker.details)
 	showSidebar();
 }
