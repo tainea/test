@@ -1,3 +1,6 @@
+var mapDataUrl = 'json/data.json';
+var mapData = [];
+
 $(document).ready(function(){
     init();
 });
@@ -5,22 +8,30 @@ $(document).ready(function(){
 function
 init()
 {
-	loadData();
-	initMap();
+	loadMapData();
 }
 
 function
-loadData()
+loadMapData()
 {
-
+	$.getJSON(mapDataUrl, onMapDataLoaded);
 }
 
 function
-initMap()
+onMapDataLoaded(data)
 {
+	mapData = data;
+	initMap(mapData.mapConfig);
+}
+
+function
+initMap(config)
+{
+	console.log(mapData);
 	new GMaps({
 		div: '#map',
-		lat: 50.894941,
-		lng: 4.341547
+		lat: config.defaultLatitude,
+		lng: config.defaultLongitude,
+		zoom: config.defaultZoom
 	});
 }
