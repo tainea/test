@@ -29,7 +29,7 @@ function
 onDataLoaded(data)
 {
 	initSidebar("#sidebar");
-	initHighlights("#highlights", data);
+	initHighlightsList("#highlights", data);
 	initMap('#map', data);
 }
 
@@ -44,7 +44,7 @@ initParallax()
 // HIGHLIGHTS
 
 function
-initHighlights(el, data)
+initHighlightsList(el, data)
 {
 	var el  = $(el);
 
@@ -52,16 +52,19 @@ initHighlights(el, data)
 
 	template = _.template('<div data-page-url="<%- pageUrl %>" class="thumbnail"><img src="<%- picture %>" alt="<%- name %>"><div class="caption"><h3><%- name %></h3><p><%- abstract %></p><p><a class="btn btn-primary" data="<%- name %>"">Learn more</a></p></div></div>');
 
-	var highlight = _.first(highlights);
-	el.html(template(highlight));
-	el.find("a.btn").first().click(onClickLearnMore);
+	_(highlights).forEach(function(highlight) {
+		el.append(template(highlight));
+	});
+	el.find("a.btn").each(function() {
+		$(this).click(onClickLearnMore)
+	});
 }
 
 function
 onClickLearnMore(e)
 {
 	var name = e.target.attributes.data.value;
-	var highlight = _.find(highlights, function(o) { return o.name = name} );
+	var highlight = _.find(highlights, {name: name} );
 	console.log(highlight);
 	updateSidebar(highlight);
 	showSidebar();
