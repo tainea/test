@@ -100,11 +100,11 @@ initMap(el, data)
 		lng: config.defaultLongitude,
 		zoom: config.defaultZoom
 	});
-	placeHighlightsOnMap(data.highlights, map);
+	markHighlightsOnMap(data.highlights, map);
 }
 
 function
-placeHighlightsOnMap(highlights, map)
+markHighlightsOnMap(highlights, map)
 {
 	_(highlights).forEach(function(highlight) {
 		map.addMarker({
