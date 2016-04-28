@@ -4,8 +4,8 @@ var debug = true;
 if (debug) var dataUrl = 'json/data.json';
 if (!debug) var dataUrl = 'http://node-test-nbwns.c9.io/discover_brussels/data/';
 
-var myMap;
 var sidebar;
+var template;
 
 $(document).ready(function(){
     init();
@@ -27,12 +27,20 @@ function
 onDataLoaded(data)
 {
 	initSidebar("#sidebar");
+	initHighlights("#highlights", data);
 	initMap('#map', data);
 }
 
 // HIGHLIGHTS
 
+function
+initHighlights(el, data)
+{
+	var hl = $(el);
 
+	template = _.template('<div data-page-url="<%- pageUrl %>" class="thumbnail"><img src="<%- picture %>" alt="<%- name %>"><div class="caption"><h3><%- name %></h3><p><%- abstract %></p><p><a href="#" class="btn btn-primary">Learn more</a></p></div></div>');
+	hl.html(template(_.first(data.highlights)));
+}
 
 // SIDEBAR
 
@@ -76,7 +84,7 @@ initMap(el, data)
 		lng: config.defaultLongitude,
 		zoom: config.defaultZoom
 	});
-	placeHighlightsOnMap(data.highlights, map);
+	//placeHighlightsOnMap(data.highlights, map);
 }
 
 function
