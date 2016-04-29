@@ -30,7 +30,7 @@ onDataLoaded(data)
 {
 	sidebar = new Sidebar($("#sidebar"));
 	initHighlightsList("#highlights", data);
-	initMap('#map', data);
+	map = new HighlightsMap($("#map"), data.mapConfig, data.highlights);
 }
 
 //PARALLAX
@@ -103,36 +103,30 @@ Sidebar(el)
 // MAP
 
 function
-initMap(el, data)
+HighlightsMap(el, config, data)
 {
-	var config = data.mapConfig;
-	var map = new GMaps({
-		div: el,
+	this._el = el;
+	this._data = data;
+
+	this._map = new GMaps({
+		div: "#" + this._el.attr("id"),
 		lat: config.defaultLatitude,
 		lng: config.defaultLongitude,
 		zoom: config.defaultZoom
 	});
-	markHighlightsOnMap(data.highlights, map);
-}
 
-function
-markHighlightsOnMap(highlights, map)
-{
-	_(highlights).forEach(function(highlight) {
-		map.addMarker({
-			lat: highlight.latitude,
-			lng: highlight.longitude,
-			title: highlight.name,
-			details: highlight,
-			click: onClickMarker
+	var m = this._map;
+	_(data).forEach(function(o) {
+		m.addMarker({
+			lat: o.latitude,
+			lng: o.longitude,
+			title: o.name,
+			details: o,
+			click: function(marker) {
+				sidebar.display(marker.details)
+				sidebar.show();
+			}
 		});
 	});
-}
-
-function
-onClickMarker(marker)
-{
-	sidebar.display(marker.details)
-	sidebar.show();
 }
 
