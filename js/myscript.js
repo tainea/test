@@ -13,14 +13,14 @@ $(document).ready(function(){
 function
 init()
 {
+	$.stellar(); // PARALLAX
 	loadData(dataUrl);
-	initParallax();
 }
 
 function
 loadData(url)
 {
-	$.getJSON(dataUrl, onDataLoaded);
+	$.getJSON(url, onDataLoaded);
 }
 
 function
@@ -31,19 +31,15 @@ onDataLoaded(data)
 	map = new HighlightsMap($("#map"), data.mapConfig, data.highlights);
 }
 
-//PARALLAX
-
-function
-initParallax()
-{
-	$.stellar();
-}
-
 // LIST
 
 function
 HighlightsList(el, data)
 {	
+
+	this._el = el;
+	this._data = data;
+
 	var template = _.template('<div data-page-url="<%- pageUrl %>" class="thumbnail"><img src="<%- picture %>" alt="<%- name %>"><div class="caption"><h3><%- name %></h3><p><%- abstract %></p><p><a class="btn btn-primary" data="<%- name %>"">Learn more</a></p></div></div>');
 
 	_(data).forEach(function(o) {
@@ -86,7 +82,9 @@ Sidebar(el)
 
 	var close = this._el.children('#close').first();
 	close.removeAttr('href');
-	close.click(this.hide());
+	close.click(function(e) {
+		sidebar.hide()
+	});
 }
 
 // MAP
