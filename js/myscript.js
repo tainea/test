@@ -1,11 +1,5 @@
 var debug = true;
 
-// if not in debug mode, we load data from an external server
-if (debug) var dataUrl = 'json/data.json';
-if (!debug) var dataUrl = 'http://node-test-nbwns.c9.io/discover_brussels/data/';
-
-var sidebar, map, list;
-
 $(document).ready(function(){
 	init();
 });
@@ -14,6 +8,10 @@ function
 init()
 {
 	$.stellar(); // PARALLAX
+
+	// if not in debug mode, we load data from an external server
+	if (debug) var dataUrl = 'json/data.json';
+	if (!debug) var dataUrl = 'http://node-test-nbwns.c9.io/discover_brussels/data/';
 	loadData(dataUrl);
 }
 
@@ -26,19 +24,20 @@ loadData(url)
 function
 onDataLoaded(data)
 {
-	sidebar = new Sidebar($("#sidebar"));
-	list = new HighlightsList($("#highlights"), data.highlights);
-	map = new HighlightsMap($("#map"), data.mapConfig, data.highlights);
+	var sidebar = new Sidebar($("#sidebar"));
+	new HighlightsList($("#highlights"), data.highlights, sidebar);
+	new HighlightsMap($("#map"), data.mapConfig, data.highlights, sidebar);
 }
 
 // LIST
 
 function
-HighlightsList(el, data)
+HighlightsList(el, data, sidebar)
 {	
 
 	this._el = el;
 	this._data = data;
+	this._sidebare = sidebar;
 
 	var template = _.template('<div data-page-url="<%- pageUrl %>" class="thumbnail"><img src="<%- picture %>" alt="<%- name %>"><div class="caption"><h3><%- name %></h3><p><%- abstract %></p><p><a class="btn btn-primary" data="<%- name %>"">Learn more</a></p></div></div>');
 
@@ -46,12 +45,12 @@ HighlightsList(el, data)
 		el.append(template(o));
 	});
 
-	el.find("a.btn").bind("click", {data: data}, function(event) {
+	el.find("a.btn").bind("click", {data: data, sidebar: sidebar}, function(event) {
 		var name = event.target.attributes.data.value;
 		var o = _.find(event.data.data, {name: name} );
 		console.log(o);
-		sidebar.display(o);
-		sidebar.show();
+		event.data.sidebar.display(o);
+		event.data.sidebar.show();
 	});
 }
 
@@ -82,18 +81,19 @@ Sidebar(el)
 
 	var close = this._el.children('#close').first();
 	close.removeAttr('href');
-	close.click(function(e) {
-		sidebar.hide()
+	close.bind("click", {sidebar: this}, function(event) {
+		event.data.sidebar.hide();
 	});
 }
 
 // MAP
 
 function
-HighlightsMap(el, config, data)
+HighlightsMap(el, config, data, sidebar)
 {
 	this._el = el;
 	this._data = data;
+	this._sidebar = sidebar;
 
 	this._map = new GMaps({
 		div: "#" + this._el.attr("id"),
