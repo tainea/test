@@ -5,11 +5,9 @@ if (debug) var dataUrl = 'json/data.json';
 if (!debug) var dataUrl = 'http://node-test-nbwns.c9.io/discover_brussels/data/';
 
 var sidebar, map, list;
-var template;
-var highlights;
 
 $(document).ready(function(){
-    init();
+	init();
 });
 
 function
@@ -29,7 +27,7 @@ function
 onDataLoaded(data)
 {
 	sidebar = new Sidebar($("#sidebar"));
-	initHighlightsList("#highlights", data);
+	list = new HighlightsList($("#highlights"), data.highlights);
 	map = new HighlightsMap($("#map"), data.mapConfig, data.highlights);
 }
 
@@ -41,33 +39,24 @@ initParallax()
 	$.stellar();
 }
 
-// HIGHLIGHTS
+// LIST
 
 function
-initHighlightsList(el, data)
-{
-	var el  = $(el);
+HighlightsList(el, data)
+{	
+	var template = _.template('<div data-page-url="<%- pageUrl %>" class="thumbnail"><img src="<%- picture %>" alt="<%- name %>"><div class="caption"><h3><%- name %></h3><p><%- abstract %></p><p><a class="btn btn-primary" data="<%- name %>"">Learn more</a></p></div></div>');
 
-	highlights = data.highlights;
-
-	template = _.template('<div data-page-url="<%- pageUrl %>" class="thumbnail"><img src="<%- picture %>" alt="<%- name %>"><div class="caption"><h3><%- name %></h3><p><%- abstract %></p><p><a class="btn btn-primary" data="<%- name %>"">Learn more</a></p></div></div>');
-
-	_(highlights).forEach(function(highlight) {
-		el.append(template(highlight));
+	_(data).forEach(function(o) {
+		el.append(template(o));
 	});
-	el.find("a.btn").each(function() {
-		$(this).click(onClickLearnMore)
-	});
-}
 
-function
-onClickLearnMore(e)
-{
-	var name = e.target.attributes.data.value;
-	var highlight = _.find(highlights, {name: name} );
-	console.log(highlight);
-	sidebar.display(highlight);
-	sidebar.show();
+	el.find("a.btn").bind("click", {data: data}, function(event) {
+		var name = event.target.attributes.data.value;
+		var o = _.find(event.data.data, {name: name} );
+		console.log(o);
+		sidebar.display(o);
+		sidebar.show();
+	});
 }
 
 // SIDEBAR
@@ -116,7 +105,7 @@ HighlightsMap(el, config, data)
 	});
 
 	var m = this._map;
-	_(data).forEach(function(o) {
+	_(this._data).forEach(function(o) {
 		m.addMarker({
 			lat: o.latitude,
 			lng: o.longitude,
