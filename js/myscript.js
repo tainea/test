@@ -4,7 +4,7 @@ var debug = true;
 if (debug) var dataUrl = 'json/data.json';
 if (!debug) var dataUrl = 'http://node-test-nbwns.c9.io/discover_brussels/data/';
 
-var sidebar;
+var sidebar, map, list;
 var template;
 var highlights;
 
@@ -28,7 +28,7 @@ loadData(url)
 function
 onDataLoaded(data)
 {
-	initSidebar("#sidebar");
+	sidebar = new Sidebar($("#sidebar"));
 	initHighlightsList("#highlights", data);
 	initMap('#map', data);
 }
@@ -66,38 +66,38 @@ onClickLearnMore(e)
 	var name = e.target.attributes.data.value;
 	var highlight = _.find(highlights, {name: name} );
 	console.log(highlight);
-	updateSidebar(highlight);
-	showSidebar();
+	sidebar.display(highlight);
+	sidebar.show();
 }
 
 // SIDEBAR
 
 function
-initSidebar(el)
+Sidebar(el)
 {
-	sidebar = $(el);
-	var close = sidebar.children('#close').first();
-	close.removeAttr('href')
-	close.click(hideSidebar);
-}
+	this._el = el;
+	this._header = this._el.children("h2").first();
+	this._content = this._el.children("div.content").first();
 
-function
-showSidebar()
-{
-	sidebar.animate({right: '0'}, 300);
-}
+	this.hide = function()
+	{
+		this._el.animate({right: '-300'}, 300);
+	}
 
-function
-hideSidebar(e)
-{
-	sidebar.animate({right: '-300'}, 300);
-}
+	this.show = function()
+	{
+		this._el.animate({right: '0'}, 300);
+	}
 
-function
-updateSidebar(data)
-{
-	sidebar.children("h2").first().text(data.name);
-	sidebar.children("div.content").first().load(data.pageUrl);
+	this.display = function(data)
+	{
+		this._header.text(data.name);
+		this._content.load(data.pageUrl);
+	}
+
+	var close = this._el.children('#close').first();
+	close.removeAttr('href');
+	close.click(this.hide());
 }
 
 // MAP
@@ -132,7 +132,7 @@ markHighlightsOnMap(highlights, map)
 function
 onClickMarker(marker)
 {
-	updateSidebar(marker.details)
-	showSidebar();
+	sidebar.display(marker.details)
+	sidebar.show();
 }
 
